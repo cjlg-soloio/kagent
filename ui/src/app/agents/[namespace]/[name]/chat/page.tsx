@@ -2,8 +2,10 @@
 
 import { use, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import ChatInterface from "@/components/chat/ChatInterface";
-import AcpHarnessChat from "@/components/chat/AcpHarnessChat";
+// TODO(shared-chat): kagent's chat now renders through the shared <Chat> from
+// @solo-io-public/ui-components via KagentChat. The old ChatInterface /
+// AcpHarnessChat components are left in place but no longer mounted here.
+import KagentChat from "@/components/chat/shared/KagentChat";
 import { getAgentWithResolvedKind } from "@/app/actions/agents";
 import { createSession } from "@/app/actions/sessions";
 import { isSubstrateSandboxAgent } from "@/lib/sandboxAgentForm";
@@ -134,8 +136,9 @@ export default function ChatAgentPage({ params }: { params: Promise<{ name: stri
   }
 
   if (harnessSession) {
+    // acpPath set → KagentChat routes to the ACP ChatProvider.
     return (
-      <AcpHarnessChat
+      <KagentChat
         acpPath={harnessSession.acpPath}
         namespace={namespace}
         agentName={name}
@@ -163,5 +166,6 @@ export default function ChatAgentPage({ params }: { params: Promise<{ name: stri
     );
   }
 
-  return <ChatInterface selectedAgentName={name} selectedNamespace={namespace} />;
+  // No acpPath → KagentChat routes to the A2A ChatProvider (fresh chat, no session yet).
+  return <KagentChat namespace={namespace} agentName={name} />;
 }

@@ -1,8 +1,10 @@
 "use client";
 import { use, Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import ChatInterface from "@/components/chat/ChatInterface";
-import AcpHarnessChat from "@/components/chat/AcpHarnessChat";
+// TODO(shared-chat): kagent's chat now renders through the shared <Chat> from
+// @solo-io-public/ui-components via KagentChat. The old ChatInterface /
+// AcpHarnessChat components are left in place but no longer mounted here.
+import KagentChat from "@/components/chat/shared/KagentChat";
 import { getAgentWithResolvedKind } from "@/app/actions/agents";
 import { Loader2 } from "lucide-react";
 
@@ -61,10 +63,28 @@ function ChatPageViewInner({ params }: { params: Promise<{ name: string; namespa
     // key={chatId} forces a clean remount when switching between chats via the
     // sidebar, so the ACP hook never carries refs (bound session id, sockets)
     // from a previously open chat into a different one.
-    return <AcpHarnessChat key={chatId} acpPath={harnessAcpPath} namespace={namespace} agentName={name} sessionId={chatId} autoConnect={!isNew} />;
+    // acpPath set → KagentChat routes to the ACP ChatProvider.
+    return (
+      <KagentChat
+        key={chatId}
+        acpPath={harnessAcpPath}
+        namespace={namespace}
+        agentName={name}
+        sessionId={chatId}
+        autoConnect={!isNew}
+      />
+    );
   }
 
-  return <ChatInterface selectedAgentName={name} selectedNamespace={namespace} sessionId={chatId} shareToken={shareToken} />;
+  // No acpPath → KagentChat routes to the A2A ChatProvider.
+  return (
+    <KagentChat
+      namespace={namespace}
+      agentName={name}
+      sessionId={chatId}
+      shareToken={shareToken}
+    />
+  );
 }
 
 export default function ChatPageView({ params }: { params: Promise<{ name: string; namespace: string; chatId: string }> }) {
