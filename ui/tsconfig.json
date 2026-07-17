@@ -36,6 +36,8 @@
     ".next/dev/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "src/components/chat/core",
+    "src/components/chat/oss-plugins"
   ]
 }

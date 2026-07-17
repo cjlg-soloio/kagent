@@ -31,6 +31,11 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     "storybook-static/**",
     "public/mockServiceWorker.js",
+    // Shared chat folders copied verbatim from kagent-enterprise. Staged pending
+    // adaptation to the OSS app (see src/components/chat/core/README.md); excluded
+    // from lint/build until wired in so they don't reference enterprise-only modules.
+    "src/components/chat/core/**",
+    "src/components/chat/oss-plugins/**",
   ]),
   ...storybook.configs["flat/recommended"],
 ]);
